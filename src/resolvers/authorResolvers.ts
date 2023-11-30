@@ -1,7 +1,10 @@
-import { Query, Resolver, Arg, Mutation, InputType, ObjectType, Field, Int } from "type-graphql";
-// import { Author } from "@prisma/client";
+import { Query, Resolver, Arg, Mutation, InputType, ObjectType, Field, Root, Int, FieldResolver } from "type-graphql";
+import { News } from "./newsResolvers";
+
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient()
+
+
 
 @ObjectType()
     class Author{
@@ -16,6 +19,9 @@ const prisma = new PrismaClient()
 
         @Field(() => String )
         createdAt : Date;
+
+        @Field(() => [News])
+        news : [News] // Will use this later for nested queries
     }
 @InputType()
 class CreateAuthorInput{
@@ -35,28 +41,34 @@ class updateAuthorInput{
     bio?: string
 }
 
-@Resolver()
+@Resolver(Author)
 export class authorResolvers {
 
     @Query(() => Author )
     async getAuthorById(@Arg("id", () => Int) id: number){
         try{
+
             const theAuthor = await prisma.author.findUnique({
                 where: {id}
             })
             return theAuthor;
+
         }catch(error){
+            
             return error;
         }
     }
 
     @Query(() => [Author])
     async getAllAuthors(){
+
         try{
+
             const allTheAuthors = await prisma.author.findMany();
             return allTheAuthors;
+
         }catch(error){
-            return error
+                return error
         }
     }
 
@@ -66,9 +78,9 @@ export class authorResolvers {
             const theNewAuthor = await prisma.author.create({
                 data: author
             })
-            // const CreateAuthorInput author
-            console.log(theNewAuthor)
+            
             return theNewAuthor;
+
         }catch(error) {
             console.log({Success: "False", message: error })
             return false;
@@ -91,6 +103,25 @@ export class authorResolvers {
                 return error;
             }
         }
-    
-    // @Author()
+}
+
+//Resolver below makes use of @Root to perform nested query
+@Resolver(Author)
+export class nestedResolver{
+
+    @Query(() => Author )
+    async author(
+        @Arg("id", () => Int) id : number
+    ){
+        return await prisma.author.findUnique({
+            where : {id}
+        })
+    }
+
+    @FieldResolver(() => [News])
+    async news(@Root() author : Author){
+        return await prisma.news.findMany({
+            where : {authorId : author.id }
+        })
+    }
 }

@@ -2,17 +2,14 @@ import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { authorResolvers } from "./resolvers/authorResolvers"
+import { authorResolvers, nestedResolver } from "./resolvers/authorResolvers"
 import { newsResolvers } from "./resolvers/newsResolvers";
-// import { Application } from "express-serve-static-core";
-// import { startStandaloneServer } from "@apollo/server/standalone";
 
-// const apolloServer = 
 (async () => {
     const app = express();
     const apolloServer = new ApolloServer({
         schema: await buildSchema({ 
-            resolvers: [authorResolvers, newsResolvers],
+            resolvers: [authorResolvers, newsResolvers, nestedResolver],
             validate: { forbidUnknownValues: false } 
         }),
         context: ({req, res}) => ({req, res})

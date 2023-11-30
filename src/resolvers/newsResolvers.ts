@@ -1,5 +1,5 @@
 import { Query, Resolver, ObjectType, Mutation, Field, Int, InputType, Arg } from "type-graphql";
-// import { Author } from "@prisma/client";
+
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient()
 
@@ -29,7 +29,7 @@ class UpdateNewsInput {
     authorId? : number 
 }
 @ObjectType()
-class News{
+export class News{
     @Field( () => Int)
     id : number
 
@@ -91,10 +91,21 @@ export class newsResolvers{
             return theUpdatedNews;
         } catch(error) {
             return error
-        }
-         
+        }    
+    }
 
-        
+    @Mutation(() => Boolean)
+    async deleteNews(
+        @Arg("id" , () => Int) id: number
+    ){
+        try{
+            await prisma.news.delete({
+                where : { id }
+            })
+            return true
+        }catch(error){
+            return false
+        }
     }
 
 }
