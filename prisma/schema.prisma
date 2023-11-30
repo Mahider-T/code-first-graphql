@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,25 +7,22 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model  Author {
-  id        Int       @id @default(autoincrement()) 
+model Author {
+  id        Int      @id @default(autoincrement())
   name      String
   bio       String?
-  createdAt DateTime?  @default(now())
-  updatedAt DateTime?  @updatedAt
-  // Define a one-to-many relationship with the News model
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   news      News[]
 }
 
-// Define the News model
 model News {
-  id        Int       @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   title     String
   content   String
-  published Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  // Define a foreign key relationship with the Author model
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   authorId  Int
-  author    Author    @relation(fields: [authorId], references: [id])
+  author    Author   @relation(fields: [authorId], references: [id])
 }
