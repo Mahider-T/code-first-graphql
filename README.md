@@ -1,4 +1,4 @@
-# GraphQL CRUD Application with Prisma, Apollo Server, and Express
+# GraphQL CRUD Application with Postgres, Prisma and Express
 
 This is a simple code first approach CRUD  application built using PostgreSQL as the database, Prisma as the ORM, Apollo Server for GraphQL, and Express for the back-end.
 
