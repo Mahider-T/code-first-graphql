@@ -50,11 +50,11 @@ export class authorResolvers {
 
             const theAuthor = await prisma.author.findUnique({
                 where: {id}
-            })
+            }) 
             return theAuthor;
 
         }catch(error){
-            
+
             return error;
         }
     }
