@@ -1,7 +1,8 @@
+import "reflect-metadata";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
 import { buildSchema } from "type-graphql";
-import { newsResolvers } from "../src/resolvers/resolvers.js"
+import { authorResolvers } from "../src/resolvers/resolvers"
 // import { Application } from "express-serve-static-core";
 // import { startStandaloneServer } from "@apollo/server/standalone";
 
@@ -9,13 +10,17 @@ import { newsResolvers } from "../src/resolvers/resolvers.js"
 (async () => {
     const app = express();
     const apolloServer = new ApolloServer({
-        schema: await buildSchema({ resolvers: [newsResolvers]}),
+        schema: await buildSchema({ 
+            resolvers: [authorResolvers],
+            validate: { forbidUnknownValues: false } 
+        }),
         context: ({req, res}) => ({req, res})
     })
-    apolloServer.applyMiddleware({app, cors: false})
+    await apolloServer.start()
+    apolloServer.applyMiddleware({app: app as express.Application, cors: true})
     app.listen(3000, () => {
         console.log("Connected on port 3000")
     })
-})()
+})();
 
 
